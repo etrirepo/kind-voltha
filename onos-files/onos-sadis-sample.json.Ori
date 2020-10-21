@@ -9,16 +9,16 @@
     },
     "entries": [
       {
-        "id": "ETRI_OLT_0",
+        "id": "BBSIM_OLT_0",
         "hardwareIdentifier": "0f:f1:ce:c0:ff:ee",
         "nasId": "BBSIMOLT000",
         "uplinkPort": 1048576
       },
       {
-        "id": "ETRI00000001-1",
-        "nasPortId": "ETRI00000001-1",
-        "circuitId": "ETRI00000001-1",
-        "remoteId": "ETRI00000001-1",
+        "id": "BBSM00000001-1",
+        "nasPortId": "BBSM00000001-1",
+        "circuitId": "BBSM00000001-1",
+        "remoteId": "BBSM00000001-1",
         "uniTagList": [{
           "ponCTag": 900,
           "ponSTag": 900,
@@ -29,10 +29,10 @@
         }]
       },
       {
-        "id": "ETRI00000002-1",
-        "nasPortId": "ETRI00000002-1",
-        "circuitId": "ETRI00000002-1",
-        "remoteId": "ETRI00000002-1",
+        "id": "BBSM00000002-1",
+        "nasPortId": "BBSM00000002-1",
+        "circuitId": "BBSM00000002-1",
+        "remoteId": "BBSM00000002-1",
         "uniTagList": [{
           "ponCTag": 901,
           "ponSTag": 900,
@@ -43,10 +43,10 @@
         }]
       },
       {
-        "id": "ETRI00000101-1",
-        "nasPortId": "ETRI00000101-1",
-        "circuitId": "ETRI00000101-1",
-        "remoteId": "ETRI00000101-1",
+        "id": "BBSM00000101-1",
+        "nasPortId": "BBSM00000101-1",
+        "circuitId": "BBSM00000101-1",
+        "remoteId": "BBSM00000101-1",
         "uniTagList": [{
           "ponCTag": 902,
           "ponSTag": 900,
@@ -57,10 +57,10 @@
         }]
       },
       {
-        "id": "ETRI00000201-1",
-        "nasPortId": "ETRI00000201-1",
-        "circuitId": "ETRI00000201-1",
-        "remoteId": "ETRI00000201-1",
+        "id": "BBSM00000201-1",
+        "nasPortId": "BBSM00000201-1",
+        "circuitId": "BBSM00000201-1",
+        "remoteId": "BBSM00000201-1",
         "uniTagList": [{
           "ponCTag": 903,
           "ponSTag": 900,

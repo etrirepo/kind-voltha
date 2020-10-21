@@ -9,19 +9,19 @@
     },
     "entries": [
       {
-        "id": "ETRI_OLT_0",
-        "hardwareIdentifier": "0f:f1:ce:c0:ff:ee",
-        "nasId": "BBSIMOLT000",
+        "id": "ETRI_OLT_4",
+        "hardwareIdentifier": "0f:f1:ce:c4:ff:ee",
+        "nasId": "BBSIMOLT004",
         "uplinkPort": 1048576
       },
       {
-        "id": "ETRI00000001-1",
-        "nasPortId": "ETRI00000001-1",
-        "circuitId": "ETRI00000001-1",
-        "remoteId": "ETRI00000001-1",
+        "id": "ETRI00040001-1",
+        "nasPortId": "ETRI00040001-1",
+        "circuitId": "ETRI00040001-1",
+        "remoteId": "ETRI00040001-1",
         "uniTagList": [{
           "ponCTag": 900,
-          "ponSTag": 900,
+          "ponSTag": 904,
           "technologyProfileId": 64,
           "downstreamBandwidthProfile": "Default",
           "upstreamBandwidthProfile": "Default",
@@ -29,13 +29,13 @@
         }]
       },
       {
-        "id": "ETRI00000002-1",
-        "nasPortId": "ETRI00000002-1",
-        "circuitId": "ETRI00000002-1",
-        "remoteId": "ETRI00000002-1",
+        "id": "ETRI00040002-1",
+        "nasPortId": "ETRI00040002-1",
+        "circuitId": "ETRI00040002-1",
+        "remoteId": "ETRI00040002-1",
         "uniTagList": [{
           "ponCTag": 901,
-          "ponSTag": 900,
+          "ponSTag": 904,
           "technologyProfileId": 64,
           "downstreamBandwidthProfile": "Default",
           "upstreamBandwidthProfile": "Default",
@@ -43,13 +43,13 @@
         }]
       },
       {
-        "id": "ETRI00000101-1",
-        "nasPortId": "ETRI00000101-1",
-        "circuitId": "ETRI00000101-1",
-        "remoteId": "ETRI00000101-1",
+        "id": "ETRI00040101-1",
+        "nasPortId": "ETRI00040101-1",
+        "circuitId": "ETRI00040101-1",
+        "remoteId": "ETRI00040101-1",
         "uniTagList": [{
           "ponCTag": 902,
-          "ponSTag": 900,
+          "ponSTag": 904,
           "technologyProfileId": 64,
           "downstreamBandwidthProfile": "Default",
           "upstreamBandwidthProfile": "Default",
@@ -57,13 +57,13 @@
         }]
       },
       {
-        "id": "ETRI00000201-1",
-        "nasPortId": "ETRI00000201-1",
-        "circuitId": "ETRI00000201-1",
-        "remoteId": "ETRI00000201-1",
+        "id": "ETRI00040201-1",
+        "nasPortId": "ETRI00040201-1",
+        "circuitId": "ETRI00040201-1",
+        "remoteId": "ETRI00040201-1",
         "uniTagList": [{
           "ponCTag": 903,
-          "ponSTag": 900,
+          "ponSTag": 904,
           "technologyProfileId": 64,
           "downstreamBandwidthProfile": "Default",
           "upstreamBandwidthProfile": "Default",
