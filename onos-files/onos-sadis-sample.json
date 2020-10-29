@@ -37,19 +37,66 @@
           "ponCTag": 901,
           "ponSTag": 900,
           "technologyProfileId": 64,
-          "downstreamBandwidthProfile": "Default",
+          "downstreamBandwidthProfile": "EtriUpstream",
           "upstreamBandwidthProfile": "Default",
           "isDhcpRequired": true
         }]
       },
       {
-        "id": "ETRI00000101-1",
-        "nasPortId": "ETRI00000101-1",
-        "circuitId": "ETRI00000101-1",
-        "remoteId": "ETRI00000101-1",
+        "id": "ETRI00000004-1",
+        "nasPortId": "ETRI00000004-1",
+        "circuitId": "ETRI00000004-1",
+        "remoteId": "ETRI00000004-1",
         "uniTagList": [{
           "ponCTag": 902,
           "ponSTag": 900,
+          "technologyProfileId": 64,
+          "downstreamBandwidthProfile": "Default",
+          "upstreamBandwidthProfile": "EtriDownstream",
+          "isDhcpRequired": true
+        }]
+      },
+      {
+        "id": "ETRI00000003-1",
+        "nasPortId": "ETRI00000003-1",
+        "circuitId": "ETRI00000003-1",
+        "remoteId": "ETRI00000003-1",
+        "uniTagList": [{
+          "ponCTag": 903,
+          "ponSTag": 900,
+          "technologyProfileId": 64,
+          "downstreamBandwidthProfile": "Default",
+          "upstreamBandwidthProfile": "Default",
+          "isDhcpRequired": true
+        }]
+      },{
+        "id": "ETRI_OLT_4",
+        "hardwareIdentifier": "0f:f1:ce:c4:ff:ee",
+        "nasId": "BBSIMOLT004",
+        "uplinkPort": 1048576
+      },
+      {
+        "id": "ETRI00040001-1",
+        "nasPortId": "ETRI00040001-1",
+        "circuitId": "ETRI00040001-1",
+        "remoteId": "ETRI00040001-1",
+        "uniTagList": [{
+          "ponCTag": 900,
+          "ponSTag": 904,
+          "technologyProfileId": 64,
+          "downstreamBandwidthProfile": "EtriUpstream",
+          "upstreamBandwidthProfile": "EtriDownstream",
+          "isDhcpRequired": true
+        }]
+      },
+      {
+        "id": "ETRI00040002-1",
+        "nasPortId": "ETRI00040002-1",
+        "circuitId": "ETRI00040002-1",
+        "remoteId": "ETRI00040002-1",
+        "uniTagList": [{
+          "ponCTag": 901,
+          "ponSTag": 904,
           "technologyProfileId": 64,
           "downstreamBandwidthProfile": "Default",
           "upstreamBandwidthProfile": "Default",
@@ -57,13 +104,26 @@
         }]
       },
       {
-        "id": "ETRI00000201-1",
-        "nasPortId": "ETRI00000201-1",
-        "circuitId": "ETRI00000201-1",
-        "remoteId": "ETRI00000201-1",
+        "id": "ETRI00040003-1",
+        "nasPortId": "ETRI00040003-1",
+        "circuitId": "ETRI00040003-1",
+        "remoteId": "ETRI00040003-1",
+        "uniTagList": [{
+          "ponCTag": 902,
+          "ponSTag": 904,
+          "technologyProfileId": 64,
+          "downstreamBandwidthProfile": "Default",
+          "upstreamBandwidthProfile": "Default",
+          "isDhcpRequired": true
+        }]
+      },{
+        "id": "ETRI00040004-1",
+        "nasPortId": "ETRI00040004-1",
+        "circuitId": "ETRI00040004-1",
+        "remoteId": "ETRI00040004-1",
         "uniTagList": [{
           "ponCTag": 903,
-          "ponSTag": 900,
+          "ponSTag": 904,
           "technologyProfileId": 64,
           "downstreamBandwidthProfile": "Default",
           "upstreamBandwidthProfile": "Default",
@@ -88,6 +148,20 @@
         "eir": 1002,
         "ebs": 1003,
         "air": 1004
+      },{
+        "id": "EtriUpstream",
+        "cir": 200000000,
+        "cbs": 348000,
+        "eir": 10000000,
+        "ebs": 348000,
+        "air": 10000000
+      },{
+        "id": "EtriDownstream",
+        "cir": 300000000,
+        "cbs": 348000,
+        "eir": 10000000,
+        "ebs": 348000,
+        "air": 10000000
       }
     ]
   }

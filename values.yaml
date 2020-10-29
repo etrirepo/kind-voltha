@@ -68,9 +68,9 @@ images:
 #  adapter_simulated_onu:
 #    repository: voltha/voltha-adapter-simulated-onu
 #    tag: 2.1.1
-#  bbsim:
-#    repository: voltha/bbsim
-#    tag: master
+  bbsim:
+    repository: etrirepository/bbsim
+    tag: dev
   ofagent:
     repository: etrirepository/voltha-ofagent-go
     tag: dev

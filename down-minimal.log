@@ -1,1 +1,2 @@
-20201020T010451Z
+20201029T033458Z
++ kubectl -n voltha delete --ignore-not-found configmap kube-config

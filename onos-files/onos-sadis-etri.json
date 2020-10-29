@@ -43,10 +43,10 @@
         }]
       },
       {
-        "id": "ETRI00040101-1",
-        "nasPortId": "ETRI00040101-1",
-        "circuitId": "ETRI00040101-1",
-        "remoteId": "ETRI00040101-1",
+        "id": "ETRI00040003-1",
+        "nasPortId": "ETRI00040003-1",
+        "circuitId": "ETRI00040003-1",
+        "remoteId": "ETRI00040003-1",
         "uniTagList": [{
           "ponCTag": 902,
           "ponSTag": 904,
@@ -57,10 +57,10 @@
         }]
       },
       {
-        "id": "ETRI00040201-1",
-        "nasPortId": "ETRI00040201-1",
-        "circuitId": "ETRI00040201-1",
-        "remoteId": "ETRI00040201-1",
+        "id": "ETRI00040004-1",
+        "nasPortId": "ETRI00040004-1",
+        "circuitId": "ETRI00040004-1",
+        "remoteId": "ETRI00040004-1",
         "uniTagList": [{
           "ponCTag": 903,
           "ponSTag": 904,
