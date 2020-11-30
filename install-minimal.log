@@ -1,4 +1,4 @@
-2020. 10. 29. (목) 12:35:04 KST
+2020. 11. 30. (월) 11:27:27 KST
 PORTS=8181,8101,55555,5022,2379,9092,6060,6061,6062,9200,5601,16686
 OPTIONS
     NAME                           = minimal
@@ -65,9 +65,9 @@ OPTIONS
     ONOS_CHART_VERSION             = latest
     ONOS_CLASSIC_CHART             = onos/onos-classic
     ONOS_CLASSIC_CHART_VERSION     = 0.1.1
-    KAFKA_CHART                    = incubator/kafka
+    KAFKA_CHART                    = bitnami/kafka
     KAFKA_CHART_VERSION            = latest
-    ETCD_CHART                     = etcd/etcd
+    ETCD_CHART                     = bitnami/etcd
     ETCD_CHART_VERSION             = latest
     RADIUS_CHART                   = onf/freeradius
     RADIUS_CHART_VERSION           = 1.0.1
@@ -102,14 +102,15 @@ INSTALL NAME: minimal
 + helm repo update
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "bbsim-sadis" chart repository
-...Successfully got an update from the "etcd" chart repository
-...Successfully got an update from the "incubator" chart repository
-...Successfully got an update from the "atomix" chart repository
 ...Successfully got an update from the "kiwigrid" chart repository
+...Successfully got an update from the "etcd" chart repository
+...Successfully got an update from the "atomix" chart repository
+...Successfully got an update from the "incubator" chart repository
 ...Successfully got an update from the "elastic" chart repository
 ...Successfully got an update from the "onos" chart repository
-...Successfully got an update from the "onf" chart repository
 ...Successfully got an update from the "stable" chart repository
+...Successfully got an update from the "onf" chart repository
+...Successfully got an update from the "bitnami" chart repository
 Update Complete. ⎈ Happy Helming!⎈ 
 Resolved helm charts and versions:
     onf/voltha:2.5.7
@@ -120,68 +121,75 @@ Resolved helm charts and versions:
     onf/voltha-adapter-openonu:2.4.6
     onf/onos:3.0.1
     onos/onos-classic:0.1.1
-    incubator/kafka:0.21.2
-    elastic/elasticsearch:7.9.3
-    elastic/kibana:7.9.3
+    bitnami/kafka:12.2.1
+    elastic/elasticsearch:7.10.0
+    elastic/kibana:7.10.0
     kiwigrid/fluentd-elasticsearch:9.6.2
     bbsim-sadis/bbsim-sadis-server:1.1.0
     onf/freeradius:1.0.1
-+ helm install -f /tmp/tmp.c93EOFon4f --create-namespace --set replicas=1 --set defaults.log_level=WARN --namespace default --set defaults.image_tag=null,images.onos.tag=4.1.4 etcd etcd/etcd
++ helm install -f /tmp/tmp.wG3d26Vd9J --create-namespace --set auth.rbac.enabled=false,persistence.enabled=false,statefulset.replicaCount=1 --set defaults.log_level=WARN --namespace default --set defaults.image_tag=null,images.onos.tag=4.1.4 etcd bitnami/etcd
 NAME: etcd
-LAST DEPLOYED: Thu Oct 29 12:35:15 2020
+LAST DEPLOYED: Mon Nov 30 11:27:41 2020
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
 NOTES:
-etcd has been installed.
-+ helm install -f /tmp/tmp.qMb8Ryma60 --create-namespace -f /tmp/tmp.YQH2CrrbTb --set defaults.log_level=WARN --namespace default --set defaults.image_tag=null,images.onos.tag=4.1.4 kafka incubator/kafka
+** Please be patient while the chart is being deployed **
+
+etcd can be accessed via port 2379 on the following DNS name from within your cluster:
+
+    etcd.default.svc.cluster.local
+
+To set a key run the following command:
+
+    export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=etcd,app.kubernetes.io/instance=etcd" -o jsonpath="{.items[0].metadata.name}")
+    kubectl exec -it $POD_NAME -- etcdctl put /message Hello
+
+To get a key run the following command:
+
+    export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=etcd,app.kubernetes.io/instance=etcd" -o jsonpath="{.items[0].metadata.name}")
+    kubectl exec -it $POD_NAME -- etcdctl get /message
+
+To connect to your etcd server from outside the cluster execute the following commands:
+
+    kubectl port-forward --namespace default svc/etcd 2379:2379 &
+    echo "etcd URL: http://127.0.0.1:2379"
++ helm install -f /tmp/tmp.iIXYuX3LqV --create-namespace -f /tmp/tmp.GPJ5nWtER3 --set defaults.log_level=WARN --namespace default --set defaults.image_tag=null,images.onos.tag=4.1.4 kafka bitnami/kafka
 NAME: kafka
-LAST DEPLOYED: Thu Oct 29 12:35:19 2020
+LAST DEPLOYED: Mon Nov 30 11:29:02 2020
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
+TEST SUITE: None
 NOTES:
-### Connecting to Kafka from inside Kubernetes
+** Please be patient while the chart is being deployed **
 
-You can connect to Kafka by running a simple pod in the K8s cluster like this with a configuration like this:
+Kafka can be accessed by consumers via port 9092 on the following DNS name from within your cluster:
 
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: testclient
-    namespace: default
-  spec:
-    containers:
-    - name: kafka
-      image: confluentinc/cp-kafka:5.0.1
-      command:
-        - sh
-        - -c
-        - "exec tail -f /dev/null"
+    kafka.default.svc.cluster.local
 
-Once you have the testclient pod above running, you can list all kafka
-topics with:
+Each Kafka broker can be accessed by producers via port 9092 on the following DNS name(s) from within your cluster:
 
-  kubectl -n default exec testclient -- ./bin/kafka-topics.sh --zookeeper kafka-zookeeper:2181 --list
+    kafka-0.kafka-headless.default.svc.cluster.local:9092
 
-To create a new topic:
+To create a pod that you can use as a Kafka client run the following commands:
 
-  kubectl -n default exec testclient -- ./bin/kafka-topics.sh --zookeeper kafka-zookeeper:2181 --topic test1 --create --partitions 1 --replication-factor 1
+    kubectl run kafka-client --restart='Never' --image docker.io/bitnami/kafka:2.6.0-debian-10-r78 --namespace default --command -- sleep infinity
+    kubectl exec --tty -i kafka-client --namespace default -- bash
 
-To listen for messages on a topic:
+    PRODUCER:
+        kafka-console-producer.sh \
+            
+            --broker-list kafka-0.kafka-headless.default.svc.cluster.local:9092 \
+            --topic test
 
-  kubectl -n default exec -ti testclient -- ./bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic test1 --from-beginning
-
-To stop the listener session above press: Ctrl+C
-
-To start an interactive message producer session:
-  kubectl -n default exec -ti testclient -- ./bin/kafka-console-producer.sh --broker-list kafka-headless:9092 --topic test1
-
-To create a message in the above session, simply type the message and press "enter"
-To end the producer session try: Ctrl+C
-
-If you specify "zookeeper.connect" in configurationOverrides, please replace "kafka-zookeeper:2181" with the value of "zookeeper.connect", or you will get error.
+    CONSUMER:
+        kafka-console-consumer.sh \
+            
+            --bootstrap-server kafka.default.svc.cluster.local:9092 \
+            --topic test \
+            --from-beginning
 ---
 # Copyright 2019 Ciena Corporation
 #
@@ -240,11 +248,11 @@ images:
 # provided as a conveinence if you would like to override on a per image
 # basis. If you are using the defaults, master, or voltha-2.1 branch there
 # is no need to utilize this list.
-  adapter_open_olt:
-    repository: etrirepository/voltha-openolt-adapter
-    tag: dev
+#  adapter_open_olt:
+#    repository: etrirepository/voltha-openolt-adapter
+#    tag: dev
   adapter_open_onu:
-    repository: etrirepository/voltha-openonu-adapter
+    repository: ywra/voltha-openonu-adapter
     tag: dev
 #  adapter_simulated_olt:
 #    repository: voltha/voltha-adapter-simulated-olt
@@ -253,14 +261,14 @@ images:
 #    repository: voltha/voltha-adapter-simulated-onu
 #    tag: 2.1.1
   bbsim:
-    repository: etrirepository/bbsim
+    repository: ywra/bbsim
     tag: dev
-  ofagent:
-    repository: etrirepository/voltha-ofagent-go
-    tag: dev
-  rw_core:
-    repository: etrirepository/voltha-rw-core
-    tag: dev
+#  ofagent:
+#    repository: etrirepository/voltha-ofagent-go
+#    tag: dev
+#  rw_core:
+#    repository: etrirepository/voltha-rw-core
+#    tag: dev
 # START_OPENONU_ADAPTER_GO - Uncomment the following block to use the
 # Go implementation of the openonu-adapter
 #  adapter_open_onu_go:
@@ -548,9 +556,9 @@ apps:
 atomix:
   persistence:
     enabled: false
-+ helm install -f /tmp/tmp.7uLHfir8FJ --create-namespace --set image.pullPolicy=Always,image.repository=voltha/voltha-onos,image.tag=4.1.4,replicas=1,atomix.replicas=0 --set defaults.log_level=WARN --namespace default --version 0.1.1 --set defaults.image_tag=null,images.onos.tag=4.1.4 onos onos/onos-classic
++ helm install -f /tmp/tmp.PkKvefjjYE --create-namespace --set image.pullPolicy=Always,image.repository=voltha/voltha-onos,image.tag=4.1.4,replicas=1,atomix.replicas=0 --set defaults.log_level=WARN --namespace default --version 0.1.1 --set defaults.image_tag=null,images.onos.tag=4.1.4 onos onos/onos-classic
 NAME: onos
-LAST DEPLOYED: Thu Oct 29 12:36:58 2020
+LAST DEPLOYED: Mon Nov 30 11:30:26 2020
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
@@ -561,26 +569,26 @@ TEST SUITE: None
 curl: (7) Failed to connect to 127.0.0.1 port 8181: Connection refused
 + curl --fail -sSL --user karaf:karaf -X GET http://127.0.0.1:8181/onos/v1/applications/org.opencord.kafka
 + grep ACTIVE
-{"name":"org.opencord.kafka","id":195,"version":"2.3.2","category":"Integration","description":"Integration with Kafka event bus","readme":"Integration with Kafka event bus","origin":"ONF","url":"http://opencord.org","featuresRepo":"mvn:org.opencord/kafka/2.3.2/xml/features","state":"ACTIVE","features":["kafka"],"permissions":[],"requiredApps":[]}
-+ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.E3vHoiu6Zf -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/network/configuration/apps/org.opencord.kafka --data '{"kafka":{"bootstrapServers":"kafka.default.svc:9092"}}'
+{"name":"org.opencord.kafka","id":192,"version":"2.3.2","category":"Integration","description":"Integration with Kafka event bus","readme":"Integration with Kafka event bus","origin":"ONF","url":"http://opencord.org","featuresRepo":"mvn:org.opencord/kafka/2.3.2/xml/features","state":"ACTIVE","features":["kafka"],"permissions":[],"requiredApps":[]}
++ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.soJPWpuurB -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/network/configuration/apps/org.opencord.kafka --data '{"kafka":{"bootstrapServers":"kafka.default.svc:9092"}}'
 RESPONSE CODE: 200
 ERROR CODE: 0
 + curl --fail -sSL --user karaf:karaf -X GET http://127.0.0.1:8181/onos/v1/applications/org.opencord.dhcpl2relay
 + grep ACTIVE
-{"name":"org.opencord.dhcpl2relay","id":189,"version":"2.1.0","category":"default","description":"DHCP L2 Relay Agent Application.","readme":"DHCP L2 Relay Agent Application.","origin":"Open Networking Foundation","url":"http://onosproject.org","featuresRepo":"mvn:org.opencord/dhcpl2relay-app/2.1.0/xml/features","state":"ACTIVE","features":["dhcpl2relay-app"],"permissions":[],"requiredApps":["org.opencord.sadis"]}
-+ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.6O6U2E187L -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/network/configuration/apps/org.opencord.dhcpl2relay --data @onos-files/onos-dhcpl2relay.json
+{"name":"org.opencord.dhcpl2relay","id":194,"version":"2.1.0","category":"default","description":"DHCP L2 Relay Agent Application.","readme":"DHCP L2 Relay Agent Application.","origin":"Open Networking Foundation","url":"http://onosproject.org","featuresRepo":"mvn:org.opencord/dhcpl2relay-app/2.1.0/xml/features","state":"ACTIVE","features":["dhcpl2relay-app"],"permissions":[],"requiredApps":["org.opencord.sadis"]}
++ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.asYMMf8arT -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/network/configuration/apps/org.opencord.dhcpl2relay --data @onos-files/onos-dhcpl2relay.json
 RESPONSE CODE: 200
 ERROR CODE: 0
-+ grep ACTIVE
 + curl --fail -sSL --user karaf:karaf -X GET http://127.0.0.1:8181/onos/v1/applications/org.opencord.olt
-{"name":"org.opencord.olt","id":192,"version":"4.1.3","category":"Traffic Steering","description":"CORD OLT Access management application","readme":"CORD OLT Access management application","origin":"Open Networking Foundation","url":"http://onosproject.org","featuresRepo":"mvn:org.opencord/olt-app/4.1.3/xml/features","state":"ACTIVE","features":["olt-app"],"permissions":[],"requiredApps":["org.opencord.sadis"]}
-+ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.3POpXKidHr -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/configuration/org.opencord.olt.impl.OltFlowService --data '{"enableEapol":true}'
++ grep ACTIVE
+{"name":"org.opencord.olt","id":195,"version":"4.1.3","category":"Traffic Steering","description":"CORD OLT Access management application","readme":"CORD OLT Access management application","origin":"Open Networking Foundation","url":"http://onosproject.org","featuresRepo":"mvn:org.opencord/olt-app/4.1.3/xml/features","state":"ACTIVE","features":["olt-app"],"permissions":[],"requiredApps":["org.opencord.sadis"]}
++ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.mvwNr6Gcvi -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/configuration/org.opencord.olt.impl.OltFlowService --data '{"enableEapol":true}'
 RESPONSE CODE: 200
 ERROR CODE: 0
-+ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.eVHaC92Mag -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/configuration/org.opencord.olt.impl.OltFlowService --data '{"enableDhcpOnProvisioning":true}'
++ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.406E8gSIPq -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/configuration/org.opencord.olt.impl.OltFlowService --data '{"enableDhcpOnProvisioning":true}'
 RESPONSE CODE: 200
 ERROR CODE: 0
-+ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.aiDUDrTXqY -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/configuration/org.opencord.olt.impl.OltFlowService --data '{"enableIgmpOnProvisioning":true}'
++ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.BxCMKZitjt -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/configuration/org.opencord.olt.impl.OltFlowService --data '{"enableIgmpOnProvisioning":true}'
 RESPONSE CODE: 200
 ERROR CODE: 0
 ---
@@ -641,11 +649,11 @@ images:
 # provided as a conveinence if you would like to override on a per image
 # basis. If you are using the defaults, master, or voltha-2.1 branch there
 # is no need to utilize this list.
-  adapter_open_olt:
-    repository: etrirepository/voltha-openolt-adapter
-    tag: dev
+#  adapter_open_olt:
+#    repository: etrirepository/voltha-openolt-adapter
+#    tag: dev
   adapter_open_onu:
-    repository: etrirepository/voltha-openonu-adapter
+    repository: ywra/voltha-openonu-adapter
     tag: dev
 #  adapter_simulated_olt:
 #    repository: voltha/voltha-adapter-simulated-olt
@@ -654,14 +662,14 @@ images:
 #    repository: voltha/voltha-adapter-simulated-onu
 #    tag: 2.1.1
   bbsim:
-    repository: etrirepository/bbsim
+    repository: ywra/bbsim
     tag: dev
-  ofagent:
-    repository: etrirepository/voltha-ofagent-go
-    tag: dev
-  rw_core:
-    repository: etrirepository/voltha-rw-core
-    tag: dev
+#  ofagent:
+#    repository: etrirepository/voltha-ofagent-go
+#    tag: dev
+#  rw_core:
+#    repository: etrirepository/voltha-rw-core
+#    tag: dev
 # START_OPENONU_ADAPTER_GO - Uncomment the following block to use the
 # Go implementation of the openonu-adapter
 #  adapter_open_onu_go:
@@ -916,9 +924,9 @@ tracing:
 #   kube-monkey/mtbf: 1
 #   kube-monkey/kill-mode: fixed
 #   kube-monkey/kill-value: 1
-+ helm install -f /tmp/tmp.Bra6GKfaJC --create-namespace --set therecanbeonlyone=true --set services.etcd.service=etcd.default.svc --set services.etcd.port=2379 --set services.etcd.address=etcd.default.svc:2379 --set kafka_broker=kafka.default.svc:9092 --set services.kafka.adapter.service=kafka.default.svc --set services.kafka.adapter.port=9092 --set services.kafka.cluster.service=kafka.default.svc --set services.kafka.cluster.port=9092 --set services.kafka.adapter.address=kafka.default.svc:9092 --set services.kafka.cluster.address=kafka.default.svc:9092 --set 'services.controller[0].service=onos-onos-classic-0.onos-onos-classic-hs.default.svc' --set 'services.controller[0].port=6653' --set 'services.controller[0].address=onos-onos-classic-0.onos-onos-classic-hs.default.svc:6653' --set defaults.log_level=WARN --namespace voltha --version 2.5.7 --set defaults.image_tag=null,images.onos.tag=4.1.4 voltha onf/voltha
++ helm install -f /tmp/tmp.8AYCyUP9py --create-namespace --set therecanbeonlyone=true --set services.etcd.service=etcd.default.svc --set services.etcd.port=2379 --set services.etcd.address=etcd.default.svc:2379 --set kafka_broker=kafka.default.svc:9092 --set services.kafka.adapter.service=kafka.default.svc --set services.kafka.adapter.port=9092 --set services.kafka.cluster.service=kafka.default.svc --set services.kafka.cluster.port=9092 --set services.kafka.adapter.address=kafka.default.svc:9092 --set services.kafka.cluster.address=kafka.default.svc:9092 --set 'services.controller[0].service=onos-onos-classic-0.onos-onos-classic-hs.default.svc' --set 'services.controller[0].port=6653' --set 'services.controller[0].address=onos-onos-classic-0.onos-onos-classic-hs.default.svc:6653' --set defaults.log_level=WARN --namespace voltha --version 2.5.7 --set defaults.image_tag=null,images.onos.tag=4.1.4 voltha onf/voltha
 NAME: voltha
-LAST DEPLOYED: Thu Oct 29 12:38:11 2020
+LAST DEPLOYED: Mon Nov 30 11:33:30 2020
 NAMESPACE: voltha
 STATUS: deployed
 REVISION: 1
@@ -981,11 +989,11 @@ images:
 # provided as a conveinence if you would like to override on a per image
 # basis. If you are using the defaults, master, or voltha-2.1 branch there
 # is no need to utilize this list.
-  adapter_open_olt:
-    repository: etrirepository/voltha-openolt-adapter
-    tag: dev
+#  adapter_open_olt:
+#    repository: etrirepository/voltha-openolt-adapter
+#    tag: dev
   adapter_open_onu:
-    repository: etrirepository/voltha-openonu-adapter
+    repository: ywra/voltha-openonu-adapter
     tag: dev
 #  adapter_simulated_olt:
 #    repository: voltha/voltha-adapter-simulated-olt
@@ -994,14 +1002,14 @@ images:
 #    repository: voltha/voltha-adapter-simulated-onu
 #    tag: 2.1.1
   bbsim:
-    repository: etrirepository/bbsim
+    repository: ywra/bbsim
     tag: dev
-  ofagent:
-    repository: etrirepository/voltha-ofagent-go
-    tag: dev
-  rw_core:
-    repository: etrirepository/voltha-rw-core
-    tag: dev
+#  ofagent:
+#    repository: etrirepository/voltha-ofagent-go
+#    tag: dev
+#  rw_core:
+#    repository: etrirepository/voltha-rw-core
+#    tag: dev
 # START_OPENONU_ADAPTER_GO - Uncomment the following block to use the
 # Go implementation of the openonu-adapter
 #  adapter_open_onu_go:
@@ -1256,9 +1264,9 @@ tracing:
 #   kube-monkey/mtbf: 1
 #   kube-monkey/kill-mode: fixed
 #   kube-monkey/kill-value: 1
-+ helm install -f /tmp/tmp.HoXGxWRyot --create-namespace --set services.etcd.service=etcd.default.svc --set services.etcd.port=2379 --set services.etcd.address=etcd.default.svc:2379 --set kafka_broker=kafka.default.svc:9092 --set services.kafka.adapter.service=kafka.default.svc --set services.kafka.adapter.port=9092 --set services.kafka.cluster.service=kafka.default.svc --set services.kafka.cluster.port=9092 --set services.kafka.adapter.address=kafka.default.svc:9092 --set services.kafka.cluster.address=kafka.default.svc:9092 --set defaults.log_level=WARN --namespace voltha --version 2.5.10 --set defaults.image_tag=null,images.onos.tag=4.1.4 open-olt onf/voltha-adapter-openolt
++ helm install -f /tmp/tmp.26Z9JatkKk --create-namespace --set services.etcd.service=etcd.default.svc --set services.etcd.port=2379 --set services.etcd.address=etcd.default.svc:2379 --set kafka_broker=kafka.default.svc:9092 --set services.kafka.adapter.service=kafka.default.svc --set services.kafka.adapter.port=9092 --set services.kafka.cluster.service=kafka.default.svc --set services.kafka.cluster.port=9092 --set services.kafka.adapter.address=kafka.default.svc:9092 --set services.kafka.cluster.address=kafka.default.svc:9092 --set defaults.log_level=WARN --namespace voltha --version 2.5.10 --set defaults.image_tag=null,images.onos.tag=4.1.4 open-olt onf/voltha-adapter-openolt
 NAME: open-olt
-LAST DEPLOYED: Thu Oct 29 12:38:47 2020
+LAST DEPLOYED: Mon Nov 30 11:34:03 2020
 NAMESPACE: voltha
 STATUS: deployed
 REVISION: 1
@@ -1321,11 +1329,11 @@ images:
 # provided as a conveinence if you would like to override on a per image
 # basis. If you are using the defaults, master, or voltha-2.1 branch there
 # is no need to utilize this list.
-  adapter_open_olt:
-    repository: etrirepository/voltha-openolt-adapter
-    tag: dev
+#  adapter_open_olt:
+#    repository: etrirepository/voltha-openolt-adapter
+#    tag: dev
   adapter_open_onu:
-    repository: etrirepository/voltha-openonu-adapter
+    repository: ywra/voltha-openonu-adapter
     tag: dev
 #  adapter_simulated_olt:
 #    repository: voltha/voltha-adapter-simulated-olt
@@ -1334,14 +1342,14 @@ images:
 #    repository: voltha/voltha-adapter-simulated-onu
 #    tag: 2.1.1
   bbsim:
-    repository: etrirepository/bbsim
+    repository: ywra/bbsim
     tag: dev
-  ofagent:
-    repository: etrirepository/voltha-ofagent-go
-    tag: dev
-  rw_core:
-    repository: etrirepository/voltha-rw-core
-    tag: dev
+#  ofagent:
+#    repository: etrirepository/voltha-ofagent-go
+#    tag: dev
+#  rw_core:
+#    repository: etrirepository/voltha-rw-core
+#    tag: dev
 # START_OPENONU_ADAPTER_GO - Uncomment the following block to use the
 # Go implementation of the openonu-adapter
 #  adapter_open_onu_go:
@@ -1596,9 +1604,9 @@ tracing:
 #   kube-monkey/mtbf: 1
 #   kube-monkey/kill-mode: fixed
 #   kube-monkey/kill-value: 1
-+ helm install -f /tmp/tmp.WkjvwJ8JQ2 --create-namespace --set services.etcd.service=etcd.default.svc --set services.etcd.port=2379 --set services.etcd.address=etcd.default.svc:2379 --set kafka_broker=kafka.default.svc:9092 --set services.kafka.adapter.service=kafka.default.svc --set services.kafka.adapter.port=9092 --set services.kafka.cluster.service=kafka.default.svc --set services.kafka.cluster.port=9092 --set services.kafka.adapter.address=kafka.default.svc:9092 --set services.kafka.cluster.address=kafka.default.svc:9092 --set replicas.adapter_open_onu=1 --set defaults.log_level=WARN --namespace voltha --version 2.4.6 --set defaults.image_tag=null,images.onos.tag=4.1.4 open-onu onf/voltha-adapter-openonu
++ helm install -f /tmp/tmp.9vIbbgBXy8 --create-namespace --set services.etcd.service=etcd.default.svc --set services.etcd.port=2379 --set services.etcd.address=etcd.default.svc:2379 --set kafka_broker=kafka.default.svc:9092 --set services.kafka.adapter.service=kafka.default.svc --set services.kafka.adapter.port=9092 --set services.kafka.cluster.service=kafka.default.svc --set services.kafka.cluster.port=9092 --set services.kafka.adapter.address=kafka.default.svc:9092 --set services.kafka.cluster.address=kafka.default.svc:9092 --set replicas.adapter_open_onu=1 --set defaults.log_level=WARN --namespace voltha --version 2.4.6 --set defaults.image_tag=null,images.onos.tag=4.1.4 open-onu onf/voltha-adapter-openonu
 NAME: open-onu
-LAST DEPLOYED: Thu Oct 29 12:38:49 2020
+LAST DEPLOYED: Mon Nov 30 11:34:04 2020
 NAMESPACE: voltha
 STATUS: deployed
 REVISION: 1
@@ -1664,11 +1672,11 @@ images:
 # provided as a conveinence if you would like to override on a per image
 # basis. If you are using the defaults, master, or voltha-2.1 branch there
 # is no need to utilize this list.
-  adapter_open_olt:
-    repository: etrirepository/voltha-openolt-adapter
-    tag: dev
+#  adapter_open_olt:
+#    repository: etrirepository/voltha-openolt-adapter
+#    tag: dev
   adapter_open_onu:
-    repository: etrirepository/voltha-openonu-adapter
+    repository: ywra/voltha-openonu-adapter
     tag: dev
 #  adapter_simulated_olt:
 #    repository: voltha/voltha-adapter-simulated-olt
@@ -1677,14 +1685,14 @@ images:
 #    repository: voltha/voltha-adapter-simulated-onu
 #    tag: 2.1.1
   bbsim:
-    repository: etrirepository/bbsim
+    repository: ywra/bbsim
     tag: dev
-  ofagent:
-    repository: etrirepository/voltha-ofagent-go
-    tag: dev
-  rw_core:
-    repository: etrirepository/voltha-rw-core
-    tag: dev
+#  ofagent:
+#    repository: etrirepository/voltha-ofagent-go
+#    tag: dev
+#  rw_core:
+#    repository: etrirepository/voltha-rw-core
+#    tag: dev
 # START_OPENONU_ADAPTER_GO - Uncomment the following block to use the
 # Go implementation of the openonu-adapter
 #  adapter_open_onu_go:
@@ -1942,14 +1950,14 @@ tracing:
 config:
   bbsim_sadis_server:
     sleep_time: 5s
-+ helm install -f /tmp/tmp.PjfBiNTRMP --create-namespace --set defaults.image_tag=null,images.onos.tag=4.1.4 --set defaults.log_level=WARN --namespace voltha --set defaults.image_tag=null,images.onos.tag=4.1.4 bbsim-sadis-server bbsim-sadis/bbsim-sadis-server
++ helm install -f /tmp/tmp.45UGZmCjLe --create-namespace --set defaults.image_tag=null,images.onos.tag=4.1.4 --set defaults.log_level=WARN --namespace voltha --set defaults.image_tag=null,images.onos.tag=4.1.4 bbsim-sadis-server bbsim-sadis/bbsim-sadis-server
 NAME: bbsim-sadis-server
-LAST DEPLOYED: Thu Oct 29 12:39:22 2020
+LAST DEPLOYED: Mon Nov 30 11:35:13 2020
 NAMESPACE: voltha
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-+ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.Yy22Wo8eGX -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/network/configuration/apps/org.opencord.sadis --data '{"sadis":{"integration":{"url":"http://bbsim-sadis-server.voltha.svc:58080/subscribers/%s","cache":{"enabled":true,"maxsize":50,"ttl":"PT1m"}}},"bandwidthprofile":{"integration":{"url":"http://bbsim-sadis-server.voltha.svc:58080/profiles/%s","cache":{"enabled":true,"maxsize":50,"ttl":"PT1m"}}}}'
++ curl -sSL --user karaf:karaf -w '%{http_code}' -o /tmp/tmp.Bv9ZMOfYpo -X POST --fail -H Content-Type:application/json http://127.0.0.1:8181/onos/v1/network/configuration/apps/org.opencord.sadis --data '{"sadis":{"integration":{"url":"http://bbsim-sadis-server.voltha.svc:58080/subscribers/%s","cache":{"enabled":true,"maxsize":50,"ttl":"PT1m"}}},"bandwidthprofile":{"integration":{"url":"http://bbsim-sadis-server.voltha.svc:58080/profiles/%s","cache":{"enabled":true,"maxsize":50,"ttl":"PT1m"}}}}'
 RESPONSE CODE: 200
 ERROR CODE: 0
 ---
@@ -2010,11 +2018,11 @@ images:
 # provided as a conveinence if you would like to override on a per image
 # basis. If you are using the defaults, master, or voltha-2.1 branch there
 # is no need to utilize this list.
-  adapter_open_olt:
-    repository: etrirepository/voltha-openolt-adapter
-    tag: dev
+#  adapter_open_olt:
+#    repository: etrirepository/voltha-openolt-adapter
+#    tag: dev
   adapter_open_onu:
-    repository: etrirepository/voltha-openonu-adapter
+    repository: ywra/voltha-openonu-adapter
     tag: dev
 #  adapter_simulated_olt:
 #    repository: voltha/voltha-adapter-simulated-olt
@@ -2023,14 +2031,14 @@ images:
 #    repository: voltha/voltha-adapter-simulated-onu
 #    tag: 2.1.1
   bbsim:
-    repository: etrirepository/bbsim
+    repository: ywra/bbsim
     tag: dev
-  ofagent:
-    repository: etrirepository/voltha-ofagent-go
-    tag: dev
-  rw_core:
-    repository: etrirepository/voltha-rw-core
-    tag: dev
+#  ofagent:
+#    repository: etrirepository/voltha-ofagent-go
+#    tag: dev
+#  rw_core:
+#    repository: etrirepository/voltha-rw-core
+#    tag: dev
 # START_OPENONU_ADAPTER_GO - Uncomment the following block to use the
 # Go implementation of the openonu-adapter
 #  adapter_open_onu_go:
@@ -2285,15 +2293,15 @@ tracing:
 #   kube-monkey/mtbf: 1
 #   kube-monkey/kill-mode: fixed
 #   kube-monkey/kill-value: 1
-+ helm install -f /tmp/tmp.tpnmyC4QQJ --create-namespace --set defaults.log_level=WARN --namespace default --version 1.0.1 --set defaults.image_tag=null,images.onos.tag=4.1.4 radius onf/freeradius
++ helm install -f /tmp/tmp.ScmIFaM5qd --create-namespace --set defaults.log_level=WARN --namespace default --version 1.0.1 --set defaults.image_tag=null,images.onos.tag=4.1.4 radius onf/freeradius
 NAME: radius
-LAST DEPLOYED: Thu Oct 29 12:39:35 2020
+LAST DEPLOYED: Mon Nov 30 11:35:27 2020
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
-+ sed -e s/:RADIUS_SVC:/radius-freeradius.default.svc/g -e s/:RADIUS_PORT:/1812/ onos-files/onos-aaa.json
 + curl --fail -sSL --user karaf:karaf -X POST http://127.0.0.1:8181/onos/v1/network/configuration/apps/org.opencord.aaa -H Content-type:application/json -d@-
++ sed -e s/:RADIUS_SVC:/radius-freeradius.default.svc/g -e s/:RADIUS_PORT:/1812/ onos-files/onos-aaa.json
 + mkdir -p /home/delta/.volt
 + voltctl -k localhost:9092 -s localhost:55555 -e localhost:2379 config
 Please issue the following commands in your terminal to ensure that you
@@ -2301,6 +2309,6 @@ are accessing the correct Kubernetes/Kind cluster as well as have the
 tools required by VOLTHA in your command path.                         
 
 export VOLTCONFIG="/home/delta/.volt/config-minimal"
-export PATH=/home/delta/etrirepo/kind-voltha/bin:$PATH
+export PATH=/home/delta/kind-voltha/bin:$PATH
 
 Thank you for choosing kind-voltha for you quick cluster needs.
